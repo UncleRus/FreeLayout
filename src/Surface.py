@@ -8,6 +8,7 @@ from Guides import Guides
 from layers import *
 from items import *
 import tools
+from items.Track import Track
 
 class Surface (QGraphicsScene):
     
@@ -38,10 +39,13 @@ class Surface (QGraphicsScene):
         self._layers ['BottomConductive'] = ConductiveLayer (self._layers, 'BottomConductive', self._layers ['BottomSlikscreen'])
         self.setCurrentLayer ('BottomConductive')
         self._tool = tools.SmdPadTool (self)
+        
+        track = Track (QPointF (10, 10), [QPointF (0, 0), QPointF (10, 10), QPointF (10, 50), QPointF (20, 60)], 1.0, self._currentLayer)
+        self.addItem (track)
     
     def reloadSettings (self):
-        self._unusedSpaceColor = settings.getColor ('Surface/UnusedSpaceColor', Qt.gray)
-        self.setBackgroundBrush (settings.getColor ('Surface/BackgroundColor', Qt.black))
+        self._unusedSpaceBrush = settings.get (QBrush, 'Surface/UnusedSpaceBrush', Qt.gray)
+        self.setBackgroundBrush (settings.get (QBrush, 'Surface/BackgroundBrush', Qt.black))
         gridType = settings.getString ('Grid/Type', u'lines')
         if self._gridType != gridType:
             self._gridType = gridType
@@ -49,6 +53,8 @@ class Surface (QGraphicsScene):
         else:
             self.grid.reloadSettings ()
         self.guides.reloadSettings ()
+        if self._tool:
+            self._tool.reloadSettings ()
 
     def position (self):
         return self._position
@@ -63,15 +69,13 @@ class Surface (QGraphicsScene):
         self._currentLayer.bringToFront ()
     
     def drawBackground (self, painter, rect):
-        #print 'Surface.drawBackground'
-        painter.fillRect (rect, self._unusedSpaceColor)
+        painter.fillRect (rect, self._unusedSpaceBrush)
         realRect = rect.intersect (self.sceneRect ())
         painter.fillRect (realRect, self.backgroundBrush ())
         self.grid.draw (painter, realRect)
 
     def drawForeground (self, painter, rect):
         realRect = rect.intersect (self.sceneRect ())
-        #print 'Surface.drawForeground', realRect
         self.guides.draw (painter, realRect)
         # TODO : рисовать дырки в плате
         if self._tool:
@@ -194,7 +198,6 @@ class Surface (QGraphicsScene):
         self.scaled.emit (self._scale)
     
     def zoomIn (self):
-        #self.setScale (self.scale () * 1 + 0.1)
         self.setScale (self.scale () * 1.25)
 
     def zoomOut (self):
