@@ -78,17 +78,17 @@ class Track (PcbItem):
     
     def mousePressEvent (self, event):
         self._dragNode = self._findNode (event.pos ())
-        if self._dragNode:
+        if self._dragNode is None:
             super (Track, self).mousePressEvent (event)
-        else:
-            QGraphicsItem.mousePressEvent (self, event)
+        #else:
+        #    QGraphicsItem.mousePressEvent (self, event)
     
     def mouseReleaseEvent (self, event):
         self._dragNode = None
         super (Track, self).mouseReleaseEvent (event)
     
     def mouseMoveEvent (self, event):
-        if not self._dragNode:
+        if self._dragNode is None:
             super (Track, self).mouseMoveEvent (event)
             return
         self.scene ().update (self.mapRectToScene (self.boundingRect ()))
@@ -104,5 +104,10 @@ class Track (PcbItem):
 
     def addNodes (self, nodes):
         self._nodes += nodes
+        self._recalc ()
+        self.update ()
+        
+    def addNode (self, node):
+        self._nodes.append (node)
         self._recalc ()
         self.update ()

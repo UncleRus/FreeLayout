@@ -8,7 +8,7 @@ from Guides import Guides
 from layers import *
 from items import *
 import tools
-from items.Track import Track
+
 
 class Surface (QGraphicsScene):
     
@@ -38,9 +38,10 @@ class Surface (QGraphicsScene):
         self._layers ['BottomSlikscreen'] = SilkscreenLayer (self._layers, 'BottomSlikscreen', self._layers ['BottomMask'])
         self._layers ['BottomConductive'] = ConductiveLayer (self._layers, 'BottomConductive', self._layers ['BottomSlikscreen'])
         self.setCurrentLayer ('BottomConductive')
-        self._tool = tools.SmdPadTool (self)
+        #self._tool = tools.SmdPadTool (self)
+        self._tool = tools.DrawTrackTool (self)
         
-        track = Track (QPointF (10, 10), [QPointF (0, 0), QPointF (10, 10), QPointF (10, 50), QPointF (20, 60)], 1.0, self._currentLayer)
+        track = Track (QPointF (20, 20), [QPointF (0, 0), QPointF (10, 10), QPointF (10, 50), QPointF (20, 60)], 1.0, self._currentLayer)
         self.addItem (track)
     
     def reloadSettings (self):

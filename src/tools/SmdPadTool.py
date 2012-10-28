@@ -18,6 +18,11 @@ class SmdPadTool (DrawSingleTool):
             self._position.y () - self._height / 2,
             self._width,
             self._height
+        ) if not self._horizontal else QRectF (
+            self._position.x () - self._height / 2,
+            self._position.y () - self._width / 2,
+            self._height,
+            self._width
         )
     
     def reloadSettings (self):
@@ -40,7 +45,6 @@ class SmdPadTool (DrawSingleTool):
     def switchType (self):
         self._surface.invalidate (self.rect ())
         self._horizontal = not self._horizontal
-        self._width, self._height = self._height, self._width
         self._surface.invalidate (self.rect ())
     
     def draw (self, painter, rect):
