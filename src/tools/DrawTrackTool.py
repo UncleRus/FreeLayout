@@ -64,9 +64,10 @@ class DrawTrackTool (SurfaceTool):
             self._nodes.append (QPointF (start.x () + finish.y ()))
         
         self._nodes.append (finish)
+        print self._nodes
 
     def _invalidate (self):
-        rect = QPolygonF (self._nodes).boundingRect ()
+        rect = QPolygonF (self._nodes if self._nodes else [self._surface.position ()]).boundingRect ()
         rect.adjust (-self._width, -self._width, self._width, self._width)
         self._surface.invalidate (rect, QGraphicsScene.AllLayers)
     
@@ -90,7 +91,6 @@ class DrawTrackTool (SurfaceTool):
                 self._surface.cancelTool ()
                 return
             self._started = False
-            #self._surface.invalidate (self._nodes.boundingRect (), QGraphicsScene.ForegroundLayer)
             self._track = None
             self._invalidate ()
             self._nodes = self._recalcPath ()
@@ -112,8 +112,8 @@ class DrawTrackTool (SurfaceTool):
                         self._surface.currentLayer ()
                     )
                     self._surface.addItem (self._track)
-                    
-                self._track.addNodes (self._nodes)
+                else:
+                    self._track.addNodes (self._nodes)
             self._lastPoint = self._surface.position ()
             self._recalcPath ()
 

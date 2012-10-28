@@ -35,14 +35,16 @@ class Track (PcbItem):
         painter.setPen (
             QPen (
                 QBrush (color, Qt.SolidPattern),
-                self._width,
+                #self._width,
+                0,
                 Qt.SolidLine,
                 Qt.RoundCap,
                 Qt.RoundJoin
             )
         )
-        for i in xrange (1, len (self._nodes)):
-            painter.drawLine (self._nodes [i - 1], self._nodes [i])
+        #for i in xrange (1, len (self._nodes)):
+        #    painter.drawLine (self._nodes [i - 1], self._nodes [i])
+        painter.drawPath (self._shape)
         if self.isSelected ():
             painter.setPen (self._selectedNodesPen)
             painter.setBrush (self._selectedNodesBrush)
@@ -55,7 +57,7 @@ class Track (PcbItem):
         p.moveTo (self._nodes [0])
         for node in self._nodes [1:]:
             p.lineTo (node)
-        for node in reversed (self._nodes [1:]):
+        for node in reversed (self._nodes [:-1]):
             p.lineTo (node)
         ps = QPainterPathStroker ()
         ps.setCapStyle (Qt.RoundCap)
